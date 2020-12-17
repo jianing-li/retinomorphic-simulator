@@ -1,4 +1,3 @@
-
 #include<cstdlib> 
 #include "getopt.h"
 #include<cstring>
@@ -14,17 +13,14 @@ extern int WIDTH = 400;
 extern int CHANNELS = 1;
 extern bool USEIMAGESIZE = false;
 
-extern int QUERYTIMES = 1;
-extern int THRESHOLD = 2550;
+extern int IVSTHRES = 2550;
 extern int DVSTHRES = 25;
-extern bool KEEPRESIDUAL = true;
 
 extern int START_IDX = 1;
 extern int END_IDX = 500;
 
-enum filetype{IMG, FORMAT, EMPTY};
+enum filetype{FORMAT, EMPTY};
 extern filetype type = EMPTY;
-extern string input_filename = "";
 extern string file_format = "";
 extern string output_filename = "output.dat";
 
@@ -54,7 +50,7 @@ void parse_command(int argc, char** argv)
 			{"height", 			required_argument, 0, 'h'},
 			{"channels",  		required_argument, 0, 'c'},
 			{"endindex",  		required_argument, 0, 'e'},
-			{"threshold",  		required_argument, 0, 't'},
+			{"ivsthres",  		required_argument, 0, 'i'},
 			{"startindex",  	required_argument, 0, 's'},
 			{"useimgsize",		no_argument,	   0, 'u'},
 			{"help",  			no_argument,	   0, '?'},
@@ -64,7 +60,7 @@ void parse_command(int argc, char** argv)
 			{"detect_size", 	required_argument, 0, 'z'},
 		};
 
-		c = getopt_long(argc, argv, "w:h:c:ue:t:f:o:s:z:d:?", long_options, &option_index);
+		c = getopt_long(argc, argv, "w:h:c:ue:i:f:o:s:z:d:?", long_options, &option_index);
 		if (c == -1)
 			break;
 		switch (c)
@@ -81,8 +77,8 @@ void parse_command(int argc, char** argv)
 		case 'u':
 			USEIMAGESIZE = true;
 			break;
-		case 't':
-			THRESHOLD = atoi(optarg);
+		case 'i':
+			IVSTHRES = atoi(optarg);
 			break;
 		case 'e':
 			END_IDX = atoi(optarg);
@@ -133,13 +129,15 @@ void show_help()
 		<< "-h or --height:\t\tthe height of the image(s)." << endl
 		<< "-c or --channels:\tthe channels of the image(s)." << endl
 		<< "-u or --useimgsize:\tuse the w*h of the images(s)" << endl
-		<< "-q or --querytimes:\tthe querytimes of the simulator." << endl
-		<< "-t or --threshold:\tthe threshold of the simulator." << endl
-		<< "-k or --keepresidual:\twhether to keep residuals in the simulator." << endl
+		<< "-i or --ivsthres:\tthe IVS threshold of the simulator." << endl
+		<< "-d or --dvsthres:\tthe DVS threshold of the simulator." << endl
+		<< "-z or --detect_size:\tthe detect size of the simulator." << endl
 		<< "-f or --input_format:\tformat of a series of input images." << endl
+		<< "-s or --startindex:\tthe start index of the images." << endl
+		<< "-e or --endindex:\tthe end index of the images." << endl
 		<< "-o or --output_file:\tname of output file." << endl
 		<< "-? or --help:\t\tthis usage." << endl << endl
-		<< "The option -i is exclusive with -f, and it's necessary to select -i or -f as input." << endl
+		<< "It's necessary to select -f as input." << endl
 		<< "It's not for other options, they have default arguments." << endl
 		<< "If you choose -u for -f, the width and height depend on the first image" << endl;
 }
